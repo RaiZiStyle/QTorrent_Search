@@ -9,7 +9,7 @@ from platform import python_version
 
 from PyQt5.QtWidgets import (QMainWindow, QAction, QApplication,
                              QWidget, QLabel, QVBoxLayout, QInputDialog,
-                             QTableWidget, QTableWidgetItem)
+                             QTableWidget, QTableWidgetItem, QStyledItemDelegate, QStyleOptionViewItem)
 # from PyQt5
 from PyQt5.QtGui import QIcon
 from PyQt5.Qt import PYQT_VERSION_STR
@@ -66,9 +66,9 @@ class Example(QMainWindow):
         # set row count
         self.tableWidget.setRowCount(100)
         # set column count
-        self.tableWidget.setColumnCount(7)
+        self.tableWidget.setColumnCount(8)
         header = ['Name', 'Size', 'Added', 'Status',
-                  'Leechers', 'Seeders', 'Ratio']
+                  'Leechers', 'Seeders', 'Ratio', 'Download']
         self.tableWidget.setHorizontalHeaderLabels(header)
         # self.tableWidget.setItem(0, 0, QTableWidgetItem("Cell (1,1)"))
 
@@ -99,12 +99,18 @@ class Example(QMainWindow):
                                         'Enter the torrent you want to search:')
         # print(text)
         if ok:
-            results, rc = self.torrentApi.makeRequest(text)
+            if not text:
+                results, rc = self.torrentApi.makeRequest()
+            else:
+                results, rc = self.torrentApi.makeRequest(text)
+            # results, rc = self.torrentApi.makeRequest(text if text == '' else False)
             self.populateTable(results)
         self.results = results
         print(f"result code : {rc}")
 
+    # TODO : Need to be able to "update"
     def populateTable(self, results: list):
+        # TODO: Handle better float
         def getRation(result: list):
             try:
                 ratio = int(result["seeders"]) / int(result["leechers"])
@@ -113,7 +119,17 @@ class Example(QMainWindow):
             return str(ratio)
         # Create table
         for x, result in enumerate(results):
-            print(f"Result : {result} , x : {x}")
+            # print(f"Result : {result} , x : {x}")
+            # icon = QIcon("icons/download.png")
+
+            # Used for icon in cell
+            delegate = IconDelegate(self.tableWidget)
+            self.tableWidget.setItemDelegate(delegate)
+            icon_file = "icons/download.png"
+            status_item = QTableWidgetItem()
+            status_icon = QIcon(icon_file)
+            status_item.setIcon(status_icon)
+
             self.tableWidget.setItem(x, 0, QTableWidgetItem(result["name"]))
             self.tableWidget.setItem(x, 1, QTableWidgetItem(result["size"]))
             self.tableWidget.setItem(x, 2, QTableWidgetItem(result["added"]))
@@ -122,15 +138,18 @@ class Example(QMainWindow):
                 x, 4, QTableWidgetItem(result["leechers"]))
             self.tableWidget.setItem(x, 5, QTableWidgetItem(result["seeders"]))
             self.tableWidget.setItem(x, 6, QTableWidgetItem(getRation(result)))
-        # self.tableWidget.setItem(0, 0, QTableWidgetItem("Cell (1,1)"))
-        # self.tableWidget.setItem(0, 1, QTableWidgetItem("Cell (1,2)"))
-        # self.tableWidget.setItem(1, 0, QTableWidgetItem("Cell (2,1)"))
-        # self.tableWidget.setItem(1, 1, QTableWidgetItem("Cell (2,2)"))
-        # self.tableWidget.setItem(2, 0, QTableWidgetItem("Cell (3,1)"))
-        # self.tableWidget.setItem(2, 1, QTableWidgetItem("Cell (3,2)"))
-        # self.tableWidget.setItem(3, 0, QTableWidgetItem("Cell (4,1)"))
-        # self.tableWidget.setItem(3, 1, QTableWidgetItem("Cell (4,2)"))
+            self.tableWidget.setItem(x, 7, status_item)
+
         self.tableWidget.move(0, 0)
+
+
+class IconDelegate(QStyledItemDelegate):
+    def initStyleOption(self, option, index) -> None:
+        super(IconDelegate, self).initStyleOption(option, index)
+        if option.features & QStyleOptionViewItem.HasDecoration:
+            s = option.decorationSize
+            s.setWidth(option.rect.width())
+            option.decorationSize = s
 
 
 class HelpWindow(QWidget):
