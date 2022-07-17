@@ -38,7 +38,10 @@ class Example(QMainWindow):
         searchAct.setStatusTip("Search Torrent")
         searchAct.triggered.connect(self.showDialog)
 
-        self.layout = QVBoxLayout()
+        mainWidget = QWidget(self)
+        self.setCentralWidget(mainWidget)
+
+        layout = QVBoxLayout()
         self.helpWindow = HelpWindow()
         self.reviewForm = ReviewForm()
         self.torrentApi = TorrentApi()
@@ -61,14 +64,15 @@ class Example(QMainWindow):
 
         self.tableWidget = QTableWidget()
         # set row count
-        self.tableWidget.setRowCount(5)
+        self.tableWidget.setRowCount(100)
         # set column count
-        self.tableWidget.setColumnCount(100)
+        self.tableWidget.setColumnCount(7)
         header = ['Name', 'Size', 'Added', 'Status',
                   'Leechers', 'Seeders', 'Ratio']
         self.tableWidget.setHorizontalHeaderLabels(header)
-        self.tableWidget.setItem(0, 0, QTableWidgetItem("Cell (1,1)"))
-        self.layout.addWidget(self.tableWidget)
+        # self.tableWidget.setItem(0, 0, QTableWidgetItem("Cell (1,1)"))
+
+        layout.addWidget(self.tableWidget)
         menubar = self.menuBar()
         fileMenu = menubar.addMenu('&File')
         fileMenu.addAction(searchAct)
@@ -83,10 +87,11 @@ class Example(QMainWindow):
         toolbar.addAction(helpAct)
         toolbar.addAction(exitAct)
 
-        self.setGeometry(300, 300, 350, 250)
+        # self.setGeometry(300, 300, 350, 250)
         self.setWindowTitle('Main window')
 
-        self.setLayout(self.layout)
+        # self.setLayout(self.layout)
+        mainWidget.setLayout(layout)
         self.show()
 
     def showDialog(self):
@@ -100,17 +105,31 @@ class Example(QMainWindow):
         print(f"result code : {rc}")
 
     def populateTable(self, results: list):
+        def getRation(result: list):
+            try:
+                ratio = int(result["seeders"]) / int(result["leechers"])
+            except ZeroDivisionError:
+                ratio = int(result["seeders"])
+            return str(ratio)
         # Create table
-        # for result in results:
-        #     print(result)
-        self.tableWidget.setItem(0, 0, QTableWidgetItem("Cell (1,1)"))
-        self.tableWidget.setItem(0, 1, QTableWidgetItem("Cell (1,2)"))
-        self.tableWidget.setItem(1, 0, QTableWidgetItem("Cell (2,1)"))
-        self.tableWidget.setItem(1, 1, QTableWidgetItem("Cell (2,2)"))
-        self.tableWidget.setItem(2, 0, QTableWidgetItem("Cell (3,1)"))
-        self.tableWidget.setItem(2, 1, QTableWidgetItem("Cell (3,2)"))
-        self.tableWidget.setItem(3, 0, QTableWidgetItem("Cell (4,1)"))
-        self.tableWidget.setItem(3, 1, QTableWidgetItem("Cell (4,2)"))
+        for x, result in enumerate(results):
+            print(f"Result : {result} , x : {x}")
+            self.tableWidget.setItem(x, 0, QTableWidgetItem(result["name"]))
+            self.tableWidget.setItem(x, 1, QTableWidgetItem(result["size"]))
+            self.tableWidget.setItem(x, 2, QTableWidgetItem(result["added"]))
+            self.tableWidget.setItem(x, 3, QTableWidgetItem(result["status"]))
+            self.tableWidget.setItem(
+                x, 4, QTableWidgetItem(result["leechers"]))
+            self.tableWidget.setItem(x, 5, QTableWidgetItem(result["seeders"]))
+            self.tableWidget.setItem(x, 6, QTableWidgetItem(getRation(result)))
+        # self.tableWidget.setItem(0, 0, QTableWidgetItem("Cell (1,1)"))
+        # self.tableWidget.setItem(0, 1, QTableWidgetItem("Cell (1,2)"))
+        # self.tableWidget.setItem(1, 0, QTableWidgetItem("Cell (2,1)"))
+        # self.tableWidget.setItem(1, 1, QTableWidgetItem("Cell (2,2)"))
+        # self.tableWidget.setItem(2, 0, QTableWidgetItem("Cell (3,1)"))
+        # self.tableWidget.setItem(2, 1, QTableWidgetItem("Cell (3,2)"))
+        # self.tableWidget.setItem(3, 0, QTableWidgetItem("Cell (4,1)"))
+        # self.tableWidget.setItem(3, 1, QTableWidgetItem("Cell (4,2)"))
         self.tableWidget.move(0, 0)
 
 
