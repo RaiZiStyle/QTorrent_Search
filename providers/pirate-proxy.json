@@ -1,0 +1,10 @@
+{
+    "name" : "Pirate Proxy",
+    "base_url" : "https://pirate-proxy.page",
+    "search_url" : "/newapi/q.php?q={TO_QUERY}&all={TAG}",
+    "itemSelector" : {
+        "item" : "li",
+        "id" : "st",
+        "class" : "list-entry"
+    }
+}
