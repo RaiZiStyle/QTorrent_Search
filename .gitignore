@@ -2,3 +2,5 @@ __pycache__/
 .VENV*
 build/
 dist/
+token.txt
+to_remove/

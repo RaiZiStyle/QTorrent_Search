@@ -9,4 +9,8 @@
 - [ ] Make a .exe installer
     - [ ] Make a onefile and used the path in it [Adding data using --onefile](https://stackoverflow.com/questions/51060894/adding-a-data-file-in-pyinstaller-using-the-onefile-option)
 
+
+# Step when software are release
+- [ ] Make a way to update the software at start
+
 # [Questions](Question.md)
