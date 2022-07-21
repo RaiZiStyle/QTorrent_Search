@@ -4,3 +4,4 @@ build/
 dist/
 token.txt
 to_remove/
+*.log
