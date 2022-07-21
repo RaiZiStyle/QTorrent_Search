@@ -24,11 +24,15 @@ class TorrentApi():
         # # print(f"[DEBUG] - page.json : {page.json()}")
         # if status_code != 200:
         #     print(f"Error Status code : {status_code} ")
+    def updateUrl(self, to_query, tag):
+        self.url = self.pirate_proxy["base_url"] + \
+            self.pirate_proxy["search_url"]
+        temp = self.url.replace("{TO_QUERY}", to_query)
+        self.url = temp.replace("{TAG}", tag)
 
     # FIXME: Need to update the url, cause on 2nd iteration, url is fully formed. We need a way to reset it.
     def makeRequest(self, to_query: str = "test", tag: str = "all"):
-        self.url = self.url.replace("{TO_QUERY}", to_query)
-        self.url = self.url.replace("{TAG}", tag)
+        self.updateUrl(to_query, tag)
         print(f"Making request for {self.url}")
         page = requests.get(self.url)
         print(f"Status code : {page.status_code}, Encoding : {page.encoding}")

@@ -108,7 +108,6 @@ class MyMainWindow(QMainWindow):
         self.results = results
         print(f"result code : {rc}")
 
-    
     def populateTable(self, results: list):
         # TODO: Handle better float
         def getRation(result: list):
