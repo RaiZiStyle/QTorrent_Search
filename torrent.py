@@ -25,6 +25,7 @@ class TorrentApi():
         # if status_code != 200:
         #     print(f"Error Status code : {status_code} ")
 
+    # FIXME: Need to update the url, cause on 2nd iteration, url is fully formed. We need a way to reset it.
     def makeRequest(self, to_query: str = "test", tag: str = "all"):
         self.url = self.url.replace("{TO_QUERY}", to_query)
         self.url = self.url.replace("{TAG}", tag)

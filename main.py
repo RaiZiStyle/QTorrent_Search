@@ -18,7 +18,7 @@ from review import ReviewForm
 from torrent import TorrentApi
 
 
-class Example(QMainWindow):
+class MyMainWindow(QMainWindow):
 
     def __init__(self):
         super().__init__()
@@ -102,13 +102,13 @@ class Example(QMainWindow):
             if not text:
                 results, rc = self.torrentApi.makeRequest()
             else:
-                results, rc = self.torrentApi.makeRequest(text)
+                results, rc = self.torrentApi.makeRequest(to_query=text)
             # results, rc = self.torrentApi.makeRequest(text if text == '' else False)
             self.populateTable(results)
         self.results = results
         print(f"result code : {rc}")
 
-    # TODO : Need to be able to "update"
+    
     def populateTable(self, results: list):
         # TODO: Handle better float
         def getRation(result: list):
@@ -175,7 +175,7 @@ class HelpWindow(QWidget):
 
 def main():
     app = QApplication(sys.argv)
-    ex = Example()
+    ex = MyMainWindow()
     # helpWindow = HelpWindow()
     # helpWindow.showHelp()
     sys.exit(app.exec_())
