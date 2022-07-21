@@ -19,7 +19,7 @@ class LogDecorator(object):
                             handlers=[logging.StreamHandler()])
         # create a file handler
         handler_file = RotatingFileHandler(
-            "QTorrent_Search.log", maxBytes=50000, backupCount=5)
+            "QTorrent_Search.log", maxBytes=500000, backupCount=1)
         handler_file.setLevel(logging.DEBUG)
 
         # create a logging format
@@ -29,7 +29,7 @@ class LogDecorator(object):
 
         # add the file handler to the logger
         # IDK why self.logger.hasHandler() is True even when i don't have one.
-        # self.logger.handlers
+        # self.logger.handlers = [] and hasHandler() is True..
         if not self.logger.handlers:
             print(f"Handler !  {self._ids}")
             self.logger.addHandler(handler_file)
@@ -44,7 +44,7 @@ class LogDecorator(object):
                 kwargs_repr = [f"{k}={v!r}" for k, v in kwargs.items()]
                 signature = ", ".join(args_repr + kwargs_repr)
                 self.logger.debug(
-                    f"Function {fn.__name__} called with args {signature}")
+                    f"Function {fn.__name__}() called with args {signature}")
                 if self.speed_test:
                     start_time = perf_counter()
                 result = fn(*args, **kwargs)
@@ -57,9 +57,16 @@ class LogDecorator(object):
             if self.speed_test:
                 stop_time = perf_counter()
                 result_time = stop_time - start_time
+            # FIXME: Do stuff when it's makeRequest cause result spam the log
+            if isinstance(result, tuple):
+                print("Do stuff")
+            else:
+                print("other stuff")
                 self.logger.info(
                     f"Function {fn.__name__}() took {result_time:.2f}s")
-            self.logger.info(f"Function {fn.__name__}() return with {result}")
+            # self.logger.info(f"Function {fn.__name__}() return with :  {result}")
+            self.logger.info(f"Function {fn.__name__}() return with :")
+            self.logger.info(result)
             return result
         return decorated
 

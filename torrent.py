@@ -8,6 +8,8 @@ from json import load, dumps
 
 import requests
 
+from Logger import LogDecorator
+
 
 class TorrentApi():
     def __init__(self, provider: str = "pirate-proxy.json") -> None:
@@ -30,27 +32,13 @@ class TorrentApi():
         temp = self.url.replace("{TO_QUERY}", to_query)
         self.url = temp.replace("{TAG}", tag)
 
-    # FIXME: Need to update the url, cause on 2nd iteration, url is fully formed. We need a way to reset it.
-    def makeRequest(self, to_query: str = "test", tag: str = "all"):
+    @LogDecorator()
+    def makeRequest(self, to_query: str = "test", tag: str = "all") -> tuple:
         self.updateUrl(to_query, tag)
         print(f"Making request for {self.url}")
         page = requests.get(self.url)
         print(f"Status code : {page.status_code}, Encoding : {page.encoding}")
         return page.json(), page.status_code
-
-    def parseRequest(self, contents: list):
-        for content in contents:
-            print(f"content : {content}")
-        # soup = BeautifulSoup(content, 'html.parser')
-        # print(soup.prettify())
-        # results = soup.find_all("li")
-        # # result = soup.find_all(self.bf_item, class_=self.bf_class, id_=self.bf_id)
-        # for result in results:
-        #     print(f"{result}")
-        # print(result.prettify())
-
-    # page, status_code = makeRequest(self)
-    # parseRequest(self,page.content)
 
 
 if __name__ == '__main__':
